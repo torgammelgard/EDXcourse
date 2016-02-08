@@ -71,9 +71,9 @@ def getGuessedWord(secretWord, lettersGuessed):
     res = ''
     for c in secretWord:
         if c in lettersGuessed:
-            res += c +' '
+            res += c + ' '
         else:
-            res += ' _'
+            res += '_ '
     return res
 
 
@@ -117,17 +117,32 @@ def hangman(secretWord):
     print 'Welcome to the game Hangman!'
     print 'I am thinking of a word that is %d letters long' % len(secretWord)
     print '-----------'
-    while not isWordGuessed(secretWord, lettersGuessed) or guessesLeft == 0:
+    while guessesLeft > 0:
+        print 'You have %d guesses left' % guessesLeft
+        print 'Available letters: %s' % getAvailableLetters(lettersGuessed)
         guess = raw_input('Please guess a letter: ')
-        lettersGuessed.append(guess.lower())
-        isWordGuessed(secretWord, lettersGuessed)
-        guessesLeft -= 1
+        guessInLowerCase = guess.lower()
 
+        if guessInLowerCase in lettersGuessed:
+            print 'Oops! You\'ve already guessed that letter: %s' % getGuessedWord(secretWord, lettersGuessed)
+        elif guessInLowerCase in secretWord:
+            lettersGuessed.append(guessInLowerCase)
+            print 'Good guess: %s' % getGuessedWord(secretWord, lettersGuessed)
+        else:
+            lettersGuessed.append(guessInLowerCase)
+            print 'Oops! That letter is not in my word: %s' % getGuessedWord(secretWord, lettersGuessed)
+            guessesLeft -= 1
+        print '-----------'
+        if isWordGuessed(secretWord, lettersGuessed):
+            print 'Congratulations, you won!'
+            break
+    if guessesLeft <= 0:
+        print 'Sorry, you ran out of guesses. The word was %s.' % secretWord
 
 # When you've completed your hangman function, uncomment these two lines
 # and run this file to test! (hint: you might want to pick your own
 # secretWord while you're testing)
 
-# secretWord = chooseWord(wordlist).lower()
-secretWord = chooseWord('apple')
+secretWord = chooseWord(wordlist).lower()
+#secretWord = chooseWord(['apple'])
 hangman(secretWord)
